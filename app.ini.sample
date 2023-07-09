@@ -1,0 +1,27 @@
+[setting]
+skipWisper = N
+skipGpt = N
+uploadHtml = Y
+sendAudioFile = N
+sendEmail = N
+sendLine = Y
+[mail]
+server=smtp.gmail.com
+port=587
+to=
+errorto=
+from=
+password=
+[openai]
+organization=
+api_key=
+[line]
+accessToken =
+sendToUserId =
+pushUrl = https://api.line.me/v2/bot/message/push
+[ftp]
+server =
+userid =
+password =
+uploadpath =
+uploadUrl =

@@ -1,0 +1,21 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <title>Text to Speech</title>
+</head>
+<body style="max-width: 500px; margin: 0 auto; padding: 10px;">
+    <button id="speak" style="padding: 10px 20px; font-size: 30px;">Speak</button>
+    <br>
+    <div id="text">__PLACE_HOLDER__</div>
+    <script>
+        document.getElementById('speak').addEventListener('click', function() {
+            var text = document.getElementById('text').innerText;
+            var msg = new SpeechSynthesisUtterance(text);
+            msg.rate = 1.5;
+            msg.pitch = 0.8;
+            window.speechSynthesis.speak(msg);
+        });
+    </script>
+</body>
+</html>
