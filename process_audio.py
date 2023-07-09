@@ -18,9 +18,10 @@ def main():
     filename = sys.argv[1]
     config.read("app.ini")
 
-    filename_all_text = os.path.splitext(filename)[0] + "_all.txt"
-    filename_sum_text = os.path.splitext(filename)[0] + "_sum.txt"
-    filename_html = os.path.splitext(filename)[0] + ".html"
+    basename = os.path.basename(filename)
+    filename_all_text = os.path.splitext(basename)[0] + "_all.txt"
+    filename_sum_text = os.path.splitext(basename)[0] + "_sum.txt"
+    filename_html = os.path.splitext(basename)[0] + ".html"
 
     init_openai()
 
