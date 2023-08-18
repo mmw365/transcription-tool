@@ -88,7 +88,7 @@ def send_to_gpt(transcript, filename_sum_text):
 
 文章:
 '''
-    if sample_all != "" and sample_sum == "":
+    if sample_all != "" and sample_sum != "":
         messages=[
             {"role": "system", "content": "あなたは優秀な編集者です。"},
             {"role": "user", "content": prompt + sample_all},
