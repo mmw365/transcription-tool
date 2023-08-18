@@ -66,10 +66,40 @@ def send_to_whisper(filename, filename_all_text):
     return transcript["text"]
 
 def send_to_gpt(transcript, filename_sum_text):
-    messages=[
-        {"role": "system", "content": "あなたは役に立つアシスタントです。"},
-        {"role": "user", "content": "以下のニュースを重要なポイントを中心に複数の段落に分け、文字数が500文字から600文字の間で要約してください。段落の間には改行を2個入れてください。\n\n" + transcript},
-    ]
+    sample_all = ""
+    sample_sum = ""
+
+    if os.path.exists("sample_all.txt"):
+        with open('sample_all.txt', 'r', encoding='utf-8') as f:
+            sample_all = f.read()
+    if os.path.exists("sample_sum.txt"):
+        with open('sample_sum.txt', 'r', encoding='utf-8') as f:
+            sample_sum = f.read()
+
+    prompt = \
+'''
+下記の条件に従い文章の内容を要約してください。
+
+条件:
+・出力は300文字程度
+・誤字や脱字は修正する
+・重要なポイントを中心に複数の段落に分ける
+・段落の間には改行を2個入れる
+
+文章:
+'''
+    if sample_all != "" and sample_sum == "":
+        messages=[
+            {"role": "system", "content": "あなたは優秀な編集者です。"},
+            {"role": "user", "content": prompt + sample_all},
+            {"role": "assistant", "content": sample_sum},
+            {"role": "user", "content": "文章:\n" + transcript},
+        ]
+    else:
+        messages=[
+            {"role": "system", "content": "あなたは優秀な編集者です。"},
+            {"role": "user", "content": prompt + transcript},
+        ]
 
     response = openai.ChatCompletion.create(
         model="gpt-3.5-turbo",
