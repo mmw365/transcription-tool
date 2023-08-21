@@ -69,6 +69,7 @@ def send_to_gpt(transcript, filename_sum_text):
     sample_all = ""
     sample_sum = ""
 
+    # Including sample in message may cause low quality output
     if os.path.exists("sample_all.txt"):
         with open('sample_all.txt', 'r', encoding='utf-8') as f:
             sample_all = f.read()
@@ -78,26 +79,28 @@ def send_to_gpt(transcript, filename_sum_text):
 
     prompt = \
 '''
-下記の条件に従い文章の内容を要約してください。
+以下のニュースを重要なポイントを中心に複数の段落に分け、文字数が500文字から600文字の間で要約してください。段落の間には改行を2個入れてください。
 
 条件:
-・出力は300文字程度
-・誤字や脱字は修正する
-・重要なポイントを中心に複数の段落に分ける
+・誤字や脱字があれば修正する
+・重要なポイントを抽出し複数の段落に分ける
 ・段落の間には改行を2個入れる
+・出力の文字数は500文字から600文字の間
+・ニュースの要約の部分だけを出力する
+・「以上、」から始まる、まとめの1文は出力しない
 
 文章:
 '''
     if sample_all != "" and sample_sum != "":
         messages=[
-            {"role": "system", "content": "あなたは優秀な編集者です。"},
+            {"role": "system", "content": "あなたは優秀な編集者です。条件に従い文章を要約します。"},
             {"role": "user", "content": prompt + sample_all},
             {"role": "assistant", "content": sample_sum},
             {"role": "user", "content": "文章:\n" + transcript},
         ]
     else:
         messages=[
-            {"role": "system", "content": "あなたは優秀な編集者です。"},
+            {"role": "system", "content": "あなたは優秀な編集者です。条件に従い文章を要約します。"},
             {"role": "user", "content": prompt + transcript},
         ]
 
