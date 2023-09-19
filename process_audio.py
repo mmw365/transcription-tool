@@ -14,37 +14,53 @@ config = ConfigParser()
 
 def main():
     if len(sys.argv) < 2:
-        sys.exit()
-    filename = sys.argv[1]
+        filename_audio = "test_file.mp3"
+    else:
+        filename_audio = sys.argv[1]
     config.read("app.ini")
 
-    basename = os.path.basename(filename)
+    basename = os.path.basename(filename_audio)
     filename_all_text = os.path.splitext(basename)[0] + "_all.txt"
     filename_sum_text = os.path.splitext(basename)[0] + "_sum.txt"
     filename_html = os.path.splitext(basename)[0] + ".html"
 
     init_openai()
+    transcript = prepare_transctipt(filename_audio, filename_all_text)
+    summary = prepare_summary_text(transcript, filename_sum_text)
+    addUrlLink = prepare_html(summary, filename_html)
+    send_all_results(filename_audio, summary, filename_html, addUrlLink)
 
+def init_openai():
+    openai.organization = config['openai']['organization']
+    openai.api_key = config['openai']['api_key']
+
+def prepare_transctipt(filename, filename_all_text):
     if config['setting']['skipWisper'] == 'Y':
         with open(filename_all_text, 'r', encoding='utf-8') as f:
             transcript = f.read()
     else:
         transcript = send_to_whisper(filename, filename_all_text)
+    return transcript
 
+def prepare_summary_text(transcript, filename_sum_text):
     if config['setting']['skipGpt'] == 'Y':
         with open(filename_sum_text, 'r', encoding='utf-8') as f:
             summary = f.read()
     else:
         summary = send_to_gpt(transcript, filename_sum_text)
+    return summary
 
+def prepare_html(summary, filename_html):
     addUrlLink = False
     if config['setting']['uploadHtml'] == 'Y':
         create_html(summary, filename_html)
         ftp_html(filename_html)
         addUrlLink = True
+    return addUrlLink
 
+def send_all_results(filename_audio, summary, filename_html, addUrlLink):
     if config['setting']['sendAudioFile'] == 'Y':
-        send_audio_file(filename)
+        send_audio_file(filename_audio)
 
     if config['setting']['sendEmail'] == 'Y':
         send_email_message(summary)
@@ -52,12 +68,8 @@ def main():
     if config['setting']['sendLine'] == 'Y':
         send_line_massage(filename_html, summary, addUrlLink)
 
-def init_openai():
-    openai.organization = config['openai']['organization']
-    openai.api_key = config['openai']['api_key']
-
-def send_to_whisper(filename, filename_all_text):
-    audio_file= open(filename, "rb")
+def send_to_whisper(filename_audio, filename_all_text):
+    audio_file= open(filename_audio, "rb")
     transcript = openai.Audio.transcribe("whisper-1", audio_file)
     print("--- 文字起こし ---")
     print(transcript["text"])
