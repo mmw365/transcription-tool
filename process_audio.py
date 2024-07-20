@@ -117,7 +117,7 @@ def send_to_gpt(transcript, filename_sum_text):
         ]
 
     response = openai.ChatCompletion.create(
-        model="gpt-3.5-turbo",
+        model="gpt-4o-mini",
         # model="gpt-4",
         messages=messages,
         # temperature=0.1,
